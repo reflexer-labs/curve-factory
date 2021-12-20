@@ -17,10 +17,11 @@ pool_types = {
     "eth": 1,
     "optimized": 2,
     "rebase": 3,
-    "meta-usd": 4,
-    "meta-btc": 5,
-    "meta-side": 6,
-    "meta-rai": 7,
+    "rai": 4,
+    "meta-usd": 5,
+    "meta-btc": 6,
+    "meta-side": 7,
+    "meta-rai": 8,
 }
 return_types = {"revert": 0, "False": 1, "None": 2}
 
@@ -121,13 +122,18 @@ def pytest_collection_modifyitems(config, items):
             items.remove(item)
             continue
 
+        # PlainXRAI pool is based on optimized pool, only supports return True/revert
+        if pool_type == 4 and return_type != 0:
+            items.remove(item)
+            continue
+
         # optimized pool only supports precision == 18
         if pool_type == 2 and decimals != 18:
             items.remove(item)
             continue
 
         # meta pools we only test against 1 type no parameterization needed
-        if pool_type in [4, 5, 6, 7]:
+        if pool_type in [5, 6, 7, 8]:
             if decimals != 18:
                 items.remove(item)
                 continue
@@ -160,11 +166,11 @@ def pytest_collection_modifyitems(config, items):
 
         # only allow meta pools in the meta directory
         if len(path_parts) > 1 and path_parts[1] == "meta":
-            if pool_type not in [4, 5, 6, 7]:
+            if pool_type not in [5, 6, 7, 8]:
                 items.remove(item)
                 continue
 
-        if pool_type != 6 and "test_sidechain_rewards.py" in path.parts:
+        if pool_type != 7 and "test_sidechain_rewards.py" in path.parts:
             items.remove(item)
             continue
 
@@ -198,8 +204,12 @@ def is_rebase_pool(pool_type):
 
 
 @pytest.fixture(scope="session")
+def is_rai_pool(pool_type):
+    return pool_type == 4
+
+@pytest.fixture(scope="session")
 def is_meta_pool(pool_type):
-    return pool_type in [4, 5, 6, 7]
+    return pool_type in [5, 6, 7, 8]
 
 
 @pytest.fixture(scope="session")

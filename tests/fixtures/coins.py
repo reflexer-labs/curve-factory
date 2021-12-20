@@ -63,7 +63,7 @@ def coins(
     elif is_rebase_pool:
         return rebase_coins
     elif is_meta_pool:
-        if pool_type == 6:
+        if pool_type == 7:
 
             class _Wrapper(wrapt.ObjectProxy):
                 def balanceOf(self, _addr):
