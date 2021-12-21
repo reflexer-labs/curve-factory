@@ -122,8 +122,13 @@ def pytest_collection_modifyitems(config, items):
             items.remove(item)
             continue
 
-        # PlainXRAI pool is based on optimized pool, only supports return True/revert
+        # PlainRAI pool is based on optimized pool, only supports return True/revert
         if pool_type == 4 and return_type != 0:
+            items.remove(item)
+            continue
+
+        # PlainRAI pool currently supports only 2 coins pool.
+        if pool_type == 4 and pool_size != 2:
             items.remove(item)
             continue
 
