@@ -1,10 +1,11 @@
 # Plain2RAI
 
+Author: https://github.com/mrazivy-vtak
 This file provides documentation for Plain2Pool which is two coin pool with adaption to handle moving redemption price such as RAI.
 
 **Tips**
 
-I've created ***two types of Plain2RAI pool, Plain2Optimized-based and Plain2Basic-based one***.
+I've created **_two types of Plain2RAI pool, Plain2Optimized-based and Plain2Basic-based one_**.
 
 On [gitcoin](https://gitcoin.co/issue/reflexer-labs/curve-contract/6/100027296), it was explained to adapt the Plain2Optimized one, but in this case, it can only handle ERC20 that returns True/revert, so I created Plain2Basic-based one just in case, as it can handle ERC20 return True/revert, True/False.
 
@@ -255,3 +256,7 @@ tests/token/test_transferFrom.py .................                              
 ## License
 
 All changes are made under the (c) Curve.Fi, 2021 - [licence](LICENSE)
+
+---
+
+https://github.com/mrazivy-vtak
