@@ -92,10 +92,13 @@ def plain_optimized(deploy_plain_implementation, plain_pool_size):
 def plain_rebase(deploy_plain_implementation, plain_pool_size):
     return deploy_plain_implementation(_pool_size=plain_pool_size, _pool_type="Balances")
 
+@pytest.fixture(scope="session")
+def plain_rai(deploy_plain_implementation, plain_pool_size):
+    return deploy_plain_implementation(_pool_size=plain_pool_size, _pool_type="RAI")
 
 @pytest.fixture(scope="session")
-def plain_implementations(plain_basic, plain_eth, plain_optimized, plain_rebase):
-    return [plain_basic, plain_eth, plain_optimized, plain_rebase]
+def plain_implementations(plain_basic, plain_eth, plain_optimized, plain_rebase, plain_rai):
+    return [plain_basic, plain_eth, plain_optimized, plain_rebase, plain_rai]
 
 
 # meta-pools require mainnet-fork network for testing
@@ -370,11 +373,11 @@ def meta_implementations(
     meta_sidechain_rebase,
     meta_rai
 ):
-    if pool_type == 4:
+    if pool_type == 5:
         return [meta_usd, meta_usd_rebase]
-    elif pool_type == 5:
+    elif pool_type == 6:
         return [meta_btc, meta_btc_rebase]
-    elif pool_type == 7:
+    elif pool_type == 8:
         return [meta_rai, meta_rai]
     else:
         return [meta_sidechain, meta_sidechain_rebase]
@@ -431,7 +434,12 @@ def swap(
             pool_type,
             {"from": alice},
         )
-        return getattr(project, plain_implementations[pool_type]._name).at(tx.return_value)
+        instance = getattr(project, plain_implementations[pool_type]._name).at(tx.return_value)
+        if pool_type == 4: # setting rate feed
+            instance.initialize_rate_feed(redemption_price_snap, 1000000000, {"from": alice})
+
+        return instance
+
     else:
         tx = factory.deploy_metapool(
             base_pool,
@@ -448,7 +456,7 @@ def swap(
         instance._build["language"] = "Vyper"
         state._add_contract(instance)
 
-        if pool_type == 7: # setting rate feed
+        if pool_type == 8: # setting rate feed
             instance.initialize_rate_feed(redemption_price_snap, 1000000000, {"from": alice})
 
         return instance
